@@ -6,11 +6,10 @@ import * as Tone from "tone";
 function Key(props: {name: string}) {
 
     let isFlat: boolean = props.name.length > 1;
-    const synth = new Tone.Synth().toDestination();
+    const synth = new Tone.Sampler().toDestination();
 
     function playSynth() {
-        console.log("clicked");
-        synth.triggerAttackRelease(props.name[0] + "4", "8n");
+        synth.triggerAttackRelease(props.name + "3", "8n");
     }
 
     return(

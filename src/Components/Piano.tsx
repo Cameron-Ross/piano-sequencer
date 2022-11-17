@@ -2,7 +2,7 @@ import React from "react";
 import Key from "./Key";
 import "../App.css";
 
-const NOTES = ["C","DF","D","EF","E","F","GF","G","AF","A", "BF", "B"];
+const NOTES = ["C","Db","D","Eb","E","F","Gb","G","Ab","A", "Bb", "B"];
 
 
 function Piano() {
