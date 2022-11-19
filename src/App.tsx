@@ -1,19 +1,19 @@
 import React from 'react';
 import './App.css';
-import Piano from './Components/Piano';
+import Octave from './Components/Octave';
 
 
 function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-
-        <Piano/>
-
-      </header>
+      {Piano()}
     </div>
   );
+
+  function Piano() {
+    return [2,3,4,5].map((e) => <Octave index={e}/>);
+  }
 }
 
 export default App;

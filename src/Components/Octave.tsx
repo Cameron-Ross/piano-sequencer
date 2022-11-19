@@ -5,7 +5,7 @@ import "../App.css";
 const NOTES = ["C","Db","D","Eb","E","F","Gb","G","Ab","A", "Bb", "B"];
 
 
-function Piano() {
+function Octave(props: {index: number}) {
 
     return(
         <div className="piano">
@@ -16,7 +16,7 @@ function Piano() {
     function GenerateKeys() {
         let keys = NOTES.map((item: string, index: number) => {
             return (
-                <Key name={item} key = {index}/>
+                <Key name={item} key = {index} octaveIndex = {props.index}/>
             )
         });
 
@@ -28,4 +28,4 @@ function Piano() {
 
 
 
-export default Piano;
+export default Octave;
