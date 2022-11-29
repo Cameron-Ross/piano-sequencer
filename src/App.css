@@ -1,38 +1,100 @@
 .App {
-  background-color: #c8c8c8;
+  background-color: #505050;
   min-height: 100vh;
+  /* justify-content: center; */
   align-items: center;
-  justify-content: center;
   display: flex;
 }
 
-.piano {
+.sequencer {
+  /* justify-content: center; */
   display: flex;
   flex-direction: row;
 }
 
+.play { 
+  background-color: rgb(13, 143, 65);
+  height: 3.5vh;
+  width: 10ch;
+  border: 1px solid black;
+  justify-content: center;
+  align-items: center;
+}
+
+.piano {
+  display: flex;
+  flex-direction: column;
+  margin-right: 1ch;
+}
+
 .key { 
   background-color: white;
-  height: 300px;
-  width: 60px;
-  border: 2px solid black;
+  height: 3.5vh;
+  width: 10ch;
+  border: 1px solid black;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: flex-end;
 }
 
 .key.flat { 
-  background-color: rgb(38, 38, 38);
-  height: 200px;
-  width: 30px;
-  z-index: 2;
-  margin-left: -18px; 
-  margin-right: -18px;
+  background-color: rgb(24, 24, 24);
+  height: 3.5vh;
+  width: 10ch;
+  display: flex;
+  border: 1px solid black;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
-.key-text { 
+.key.text { 
   color: black;
-  font-weight: 700;
-  font-size: xx-large;
+  font-weight: 500;
+  font-size: medium;
   user-select: none;
+  padding-right: .2ch;
 }
+
+.key.text.alt { 
+  color: rgb(255, 255, 255);
+  font-weight: 500;
+  font-size: medium;
+  user-select: none;
+  padding-right: .2ch;
+  display: flex;
+  background-color: transparent;
+}
+
+.grid.cell { 
+  background-color: rgb(176, 176, 176);
+  height: 3.5vh;
+  width: 8ch;
+  border: 1px solid black;
+  margin-left: 1ch;
+  margin-right: 1ch;
+}
+
+.grid.cell.active { 
+  background-color: rgb(107, 106, 106);
+  height: 3.5vh;
+  width: 8ch;
+  border: 1px solid black;
+  margin-left: 1ch;
+  margin-right: 1ch;
+}
+
+.grid.column.active { 
+  background-color: rgb(163, 179, 63);
+  flex-direction: column;
+}
+
+.grid.column { 
+  background-color: transparent;
+  flex-direction: column;
+}
+
+.grid { 
+  flex-direction: row;
+  display: flex;
+}
+
