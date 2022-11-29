@@ -7,12 +7,11 @@ const NOTES = ["C","Db","D","Eb","E","F","Gb","G","Ab","A", "Bb", "B"];
 // Make a new instrument and set the destination to be the speakers
 const synth = new Tone.Synth({ oscillator: { type: "square8" } }).toDestination();
 // How many steps (columns) to include in the grid
-const STEPS = 8;
+const STEPS = 12;
 // A list of octaves
 const OCTAVES = [4,5];
 
 let started = false;
-let playing = false;
 let stepCount = 0;
 
 
@@ -25,16 +24,43 @@ function App() {
 
   const [stepGrid, setStepGrid] = useState<Cell[][]>(getClearGrid()); 
   const [currentStep, setCurrentStep] = useState<number>(stepCount); 
+  const [playing, setPlaying] = useState<boolean>(false); 
   
   return (
     <div className="App">
+      {PlayButton()}
       <div className="sequencer">
         {Piano()}
         {Grid()}
       </div>
+    </div>
+  );
 
-      <div className="play" onMouseDown = {() => {
-        console.log("Playing", !playing);
+  function Loop() {
+
+    function repeat(time: number) {
+      stepCount = (stepCount + 1) % STEPS;
+      setCurrentStep(stepCount);
+
+      stepGrid.forEach((row: Cell[]) => {
+        let cell: Cell = row[stepCount];
+        if(cell.active) {
+          playNote(cell.note, undefined, time);
+        }
+      })
+      
+    }
+    
+    // set the tempo in beats per minute.
+    Tone.Transport.bpm.value = 120;
+    // telling the transport to execute our callback function every eight note.
+    Tone.Transport.scheduleRepeat(repeat, "4n");
+
+  }
+
+  function PlayButton() {
+    return(
+      <div className={!playing ? "play" : "pause"} onMouseDown = {() => {
         if(!playing) {
 
           if(!started) {
@@ -45,42 +71,19 @@ function App() {
           }
           
           Tone.Transport.start();
-          playing = true;
+          setPlaying(true);
 
 
         }
         else {  
           Tone.Transport.stop();
-          playing = false;
+          setPlaying(false);
         }
       }}
       >
-        Play
+        {!playing ? "Play" : "Pause"} 
       </div>
-
-    </div>
-  );
-
-  function Loop() {
-
-    function repeat(time: number) {
-      console.log("Step:", stepCount);
-
-      stepGrid.forEach((row: Cell[]) => {
-        let cell: Cell = row[stepCount];
-        if(cell.active) {
-          playNote(cell.note, undefined, time);
-        }
-      })
-      stepCount = (stepCount + 1) % STEPS;
-      setCurrentStep(stepCount);
-    }
-    
-    // set the tempo in beats per minute.
-    Tone.Transport.bpm.value = 120;
-    // telling the transport to execute our callback function every eight note.
-    Tone.Transport.scheduleRepeat(repeat, "4n");
-
+    )
   }
 
   //#region Grid Render Functions
@@ -176,7 +179,6 @@ function App() {
         // combining the two gives it a start and stop immediately
             // arg 1 > is a note. Standard 88 key piano goes from key A0 to C8 
             // arg 2 > is how the note should play for. either in seconds or note values
-            console.log(note);
         synth.triggerAttackRelease(note, "4n", time);
     }
   }

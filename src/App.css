@@ -1,9 +1,10 @@
 .App {
-  background-color: #505050;
+  background-color: #747474;
   min-height: 100vh;
   /* justify-content: center; */
-  align-items: center;
+
   display: flex;
+  flex-direction: column;
 }
 
 .sequencer {
@@ -13,12 +14,21 @@
 }
 
 .play { 
-  background-color: rgb(13, 143, 65);
+  background-color: rgb(41, 167, 91);
   height: 3.5vh;
   width: 10ch;
   border: 1px solid black;
-  justify-content: center;
-  align-items: center;
+  align-self: center;
+  text-align: center;
+}
+
+.pause { 
+  background-color: rgb(214, 72, 72);
+  height: 3.5vh;
+  width: 10ch;
+  border: 1px solid black;
+  align-self: center;
+  text-align: center;
 }
 
 .piano {
@@ -89,12 +99,12 @@
 }
 
 .grid.column { 
-  background-color: transparent;
   flex-direction: column;
 }
 
 .grid { 
   flex-direction: row;
   display: flex;
+  scroll-behavior: smooth;
 }
 
