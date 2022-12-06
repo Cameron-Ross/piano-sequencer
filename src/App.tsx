@@ -3,20 +3,21 @@ import './App.css';
 import * as Tone from "tone";
 
 // A list of all the notes in an octave
-const NOTES = ["C","Db","D","Eb","E","F","Gb","G","Ab","A", "Bb", "B"];
+const NOTES2 = ["C","Db","D","Eb","E","F","Gb","G","Ab","A", "Bb", "B"];
+const NOTES = ["B","Bb","A","Ab","G","Gb","F","E","Eb","D", "Db", "C"];
 // Make a new instrument and set the destination to be the speakers
 const synth = new Tone.Synth({ oscillator: { type: "square8" } }).toDestination();
 // How many steps (columns) to include in the grid
-const STEPS = 12;
+const STEPS = 40;
 // A list of octaves
-const OCTAVES = [4,5];
+const OCTAVES = [5,4];
 
 let started = false;
 let stepCount = 0;
+let eventID = 0;
 
 
 // TODO
-  // Fix delay in animation
   // Have grid be in scrollable horizontal list
   // Update styling
 
@@ -28,11 +29,18 @@ function App() {
   
   return (
     <div className="App">
-      {PlayButton()}
-      <div className="sequencer">
+
+      <div style = {{display: "flex", flexDirection: "row", alignSelf: "center"}}>
+        {PlayButton()}
+        {ClearButton()}
+        {SampleButton()}
+      </div>
+
+      <div style = {{display: "flex", flexDirection: "row"}}>
         {Piano()}
         {Grid()}
       </div>
+
     </div>
   );
 
@@ -54,36 +62,118 @@ function App() {
     // set the tempo in beats per minute.
     Tone.Transport.bpm.value = 120;
     // telling the transport to execute our callback function every eight note.
-    Tone.Transport.scheduleRepeat(repeat, "4n");
+    eventID = Tone.Transport.scheduleRepeat(repeat, "4n");
 
   }
 
   function PlayButton() {
+
+    let buttonStyle: React.CSSProperties = {
+      backgroundColor: !playing ? "green" : "#ac183c",
+      textAlign: "center",
+      alignSelf: "center",
+      margin: 5,
+      width: 75,
+      height: 25,
+      borderRadius: 10 
+    };
+
     return(
-      <div className={!playing ? "play" : "pause"} onMouseDown = {() => {
-        if(!playing) {
-
-          if(!started) {
-            Tone.start();
-            Tone.getDestination().volume.rampTo(-10, 0.001);
-            Loop();
-            started = true;
-          }
-          
-          Tone.Transport.start();
-          setPlaying(true);
-
-
-        }
-        else {  
-          Tone.Transport.stop();
-          setPlaying(false);
-        }
-      }}
-      >
-        {!playing ? "Play" : "Pause"} 
+      <div style={buttonStyle} onMouseDown = {() => onPress()}>
+        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none"}}>
+          {!playing ? "Play" : "Pause"}
+        </div>
       </div>
     )
+
+    function onPress() {
+      if(!playing) {
+        // Start Tone if it has not started already
+        if(!started) {
+          Tone.start();
+          Tone.getDestination().volume.rampTo(-10, 0.001);
+          Loop();
+          started = true;
+        }
+        // Start transport
+        Tone.Transport.start();
+        // Play sound of current step immediately
+        stepGrid.forEach((row: Cell[]) => {
+          let cell: Cell = row[stepCount];
+          if(cell.active) {
+            playNote(cell.note, undefined);
+          }
+        })
+        // Set playing to true
+        setPlaying(true);
+      }
+      else {
+        // Stop transport
+        Tone.Transport.stop();
+        // Set playing to false
+        setPlaying(false);
+      }
+    }
+  }
+
+  function ClearButton() {
+
+    let buttonStyle: React.CSSProperties = {
+      backgroundColor: "#259692",
+      textAlign: "center",
+      alignSelf: "center",
+      margin: 5,
+      width: 75,
+      height: 25,
+      borderRadius: 10 
+    };
+
+    return(
+      <div style={buttonStyle} onMouseDown = {() => onPress()}>
+        <div style={{fontWeight: "bold", marginTop: 2}}>
+          {"Clear"}
+        </div>
+      </div>
+    )
+
+    function onPress() {
+      setStepGrid(getClearGrid());
+      stepCount = 0;
+      setCurrentStep(0);
+      setPlaying(false);
+      Tone.Transport.clear(eventID);
+      started = false;
+    }
+  }
+
+  function SampleButton() {
+
+    let buttonStyle: React.CSSProperties = {
+      backgroundColor: "#e09808",
+      textAlign: "center",
+      alignSelf: "center",
+      margin: 5,
+      width: 75,
+      height: 25,
+      borderRadius: 10 
+    };
+
+    return(
+      <div style={buttonStyle} onMouseDown = {() => onPress()}>
+        <div style={{fontWeight: "bold", marginTop: 2}}>
+          {"Sample"}
+        </div>
+      </div>
+    )
+
+    function onPress() {
+      setStepGrid(getClearGrid());
+      stepCount = 0;
+      setCurrentStep(0);
+      Tone.Transport.stop();
+      setPlaying(false);
+      started = false;
+    }
   }
 
   //#region Grid Render Functions
@@ -94,7 +184,7 @@ function App() {
     }
 
     return(
-      <div className="grid">
+      <div style = {{flexDirection: "row", display: "flex"}}>
         {columns}
       </div>
     )
@@ -109,21 +199,24 @@ function App() {
     }
 
     return(
-      <div className = {columnIndex === currentStep ? "grid column active" : "grid column"} key = {columnIndex}>
+      <div 
+        style={{backgroundColor: columnIndex === currentStep ? "#A3B33F" : "transparent", flexDirection: "column"}} key = {columnIndex}>
         {cells}
       </div>
     )
   }
 
   function renderCell(cell: Cell, row: number, col: number) {
+
+    let cellStyle: React.CSSProperties = {
+      backgroundColor: cell.active ? "red" : (cell.note.length !== 2 ? "#45474c" : "#66666a"),
+      height: 25,
+      width: 25,
+      margin: 4,
+    };
+
     return(
-      <div 
-        className = {cell.active ? "grid cell active" : "grid cell"} 
-        key ={cell.note}
-        onMouseDown = {() => onCellClick(row, col, !cell.active)}
-      >
-      
-      </div>
+       <div key ={cell.note} onMouseDown = {() => onCellClick(row, col, !cell.active)} style = {cellStyle}/>
     ) 
   }
 
@@ -132,16 +225,15 @@ function App() {
   //#region Piano Render Functions
   function Piano() {
     return(
-      <div className="piano">
+      <div style={{display: "flex", marginRight: 10, flexDirection: "column"}}>
         {OCTAVES.map((e) => Octave(e))}
       </div>
     )
   }
 
   function Octave(octaveIndex: number) {
-
     return(
-      <div className="octave" key = {octaveIndex}>
+      <div key = {octaveIndex}>
         { NOTES.map((item) => Key(item, octaveIndex))}
       </div>
     )
@@ -152,18 +244,31 @@ function App() {
     // Find if the key is a flat based onm the length of the name
     let isFlat: boolean = note.length > 1;
 
-    return(
-      <div 
-        className= {(isFlat ? "key flat" : "key")} 
-        onMouseDown = {(event) => playNote(note + octaveIndex, event)} 
-        onMouseEnter = {(event) => playNote(note + octaveIndex, event)}
-        key = {note}
-      >
+    let keyStyle: React.CSSProperties = {
+      backgroundColor: !isFlat ? "white" : "black",
+      height: 25,
+      width: 75,
+      marginTop: 4,
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end'
+    };
 
-        <div className = {(isFlat ? "key text alt" : "key text")}>
+    let keyTextStyle: React.CSSProperties = {
+      color: !isFlat ? "black" : "white",
+      backgroundColor: "transparent",
+      display: 'flex',
+      fontWeight: "500",
+      fontSize: 16,
+      userSelect: "none",
+      paddingRight: 5, 
+    };
+
+    return(
+      <div onMouseDown = {(event) => playNote(note + octaveIndex, event)} onMouseEnter = {(event) => playNote(note + octaveIndex, event)} key = {note} style = {keyStyle}>
+        <div style={keyTextStyle}>
           {note}
         </div>
-
       </div>
     )
 
