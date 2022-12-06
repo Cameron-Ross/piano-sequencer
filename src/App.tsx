@@ -31,7 +31,7 @@ function App() {
   return (
     <div style = {{backgroundColor: "#2b2c2f", paddingBottom: 20, flexDirection: 'column', display: "flex"}}>
 
-      <div style = {{display: "flex", flexDirection: "row", alignSelf: "center"}}>
+      <div style = {{display: "flex", flexDirection: "row", marginLeft: 75}}>
         {PlayButton()}
         {ClearButton()}
         {SampleButton()}
