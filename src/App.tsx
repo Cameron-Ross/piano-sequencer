@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
-import './App.css';
 import * as Tone from "tone";
 
 // A list of all the notes in an octave
-const NOTES2 = ["C","Db","D","Eb","E","F","Gb","G","Ab","A", "Bb", "B"];
 const NOTES = ["B","Bb","A","Ab","G","Gb","F","E","Eb","D", "Db", "C"];
+
+// Notes for Sample Song
+const SAMPLE_NOTES = ["E5", "D5", "C5", "D5", "E5", "E5", "E5","", "D5", "D5", "D5","", "E5","G5", "G5", "", "E5", "D5", "C5", "D5", "E5", "E5", "E5", "E5", "D5", "D5", "E5", "D5", "C5"];
+
 // Make a new instrument and set the destination to be the speakers
 const synth = new Tone.Synth({ oscillator: { type: "square8" } }).toDestination();
+
 // How many steps (columns) to include in the grid
-const STEPS = 40;
+const STEPS = 30;
+
 // A list of octaves
 const OCTAVES = [5,4];
 
+// Flags
 let started = false;
 let stepCount = 0;
 let eventID = 0;
 
-
-// TODO
-  // Have grid be in scrollable horizontal list
-  // Update styling
 
 function App() {
 
@@ -28,7 +29,7 @@ function App() {
   const [playing, setPlaying] = useState<boolean>(false); 
   
   return (
-    <div className="App">
+    <div style = {{backgroundColor: "#2b2c2f", paddingBottom: 20, flexDirection: 'column', display: "flex"}}>
 
       <div style = {{display: "flex", flexDirection: "row", alignSelf: "center"}}>
         {PlayButton()}
@@ -47,7 +48,7 @@ function App() {
   function Loop() {
 
     function repeat(time: number) {
-      stepCount = (stepCount + 1) % STEPS;
+
       setCurrentStep(stepCount);
 
       stepGrid.forEach((row: Cell[]) => {
@@ -56,6 +57,9 @@ function App() {
           playNote(cell.note, undefined, time);
         }
       })
+
+      stepCount = (stepCount + 1) % STEPS;
+      
       
     }
     
@@ -66,6 +70,7 @@ function App() {
 
   }
 
+  //#region buttons
   function PlayButton() {
 
     let buttonStyle: React.CSSProperties = {
@@ -88,29 +93,21 @@ function App() {
 
     function onPress() {
       if(!playing) {
-        // Start Tone if it has not started already
+        
         if(!started) {
           Tone.start();
-          Tone.getDestination().volume.rampTo(-10, 0.001);
+          Tone.Transport.clear(eventID);
+          stepCount = 0;
+          setCurrentStep(0);
           Loop();
           started = true;
         }
-        // Start transport
+
         Tone.Transport.start();
-        // Play sound of current step immediately
-        stepGrid.forEach((row: Cell[]) => {
-          let cell: Cell = row[stepCount];
-          if(cell.active) {
-            playNote(cell.note, undefined);
-          }
-        })
-        // Set playing to true
         setPlaying(true);
       }
       else {
-        // Stop transport
         Tone.Transport.stop();
-        // Set playing to false
         setPlaying(false);
       }
     }
@@ -130,7 +127,7 @@ function App() {
 
     return(
       <div style={buttonStyle} onMouseDown = {() => onPress()}>
-        <div style={{fontWeight: "bold", marginTop: 2}}>
+        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none"}}>
           {"Clear"}
         </div>
       </div>
@@ -138,9 +135,8 @@ function App() {
 
     function onPress() {
       setStepGrid(getClearGrid());
-      stepCount = 0;
-      setCurrentStep(0);
       setPlaying(false);
+      setCurrentStep(0);
       Tone.Transport.clear(eventID);
       started = false;
     }
@@ -160,21 +156,21 @@ function App() {
 
     return(
       <div style={buttonStyle} onMouseDown = {() => onPress()}>
-        <div style={{fontWeight: "bold", marginTop: 2}}>
+        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none"}}>
           {"Sample"}
         </div>
       </div>
     )
 
     function onPress() {
-      setStepGrid(getClearGrid());
-      stepCount = 0;
-      setCurrentStep(0);
-      Tone.Transport.stop();
+      setStepGrid(getSampleGrid());
       setPlaying(false);
+      setCurrentStep(0);
+      Tone.Transport.clear(eventID);
       started = false;
     }
   }
+  //#endregion
 
   //#region Grid Render Functions
   function Grid() {
@@ -307,6 +303,29 @@ function App() {
 
     return grid;
   }
+
+  function getSampleGrid() {
+    // Get an empty grid
+    let grid: Cell[][] = getClearGrid();
+
+    // Loop through sample notes and mark corresponding cells as active
+    for (let index = 0; index < SAMPLE_NOTES.length; index++) {
+      const note = SAMPLE_NOTES[index];
+
+      for (let rowIndex = 0; rowIndex < grid.length; rowIndex++) {
+        const row: Cell[] = grid[rowIndex];
+        if(row[0].note === note) {
+          grid[rowIndex][index].active = true;
+          break;
+        }
+      }
+
+      
+    }
+
+    return grid;
+  }
+
 
   function onCellClick(row: number, col: number, enable: boolean) {
     stepGrid[row][col].active = enable;
