@@ -204,15 +204,30 @@ function App() {
 
   function renderCell(cell: Cell, row: number, col: number) {
 
+    let colors: string[] = ["#ff0000", "#0a9e1b", "#0067ff", "#7f00ff", "#c50caf", "#8f9c05"];
+
     let cellStyle: React.CSSProperties = {
-      backgroundColor: cell.active ? "red" : (cell.note.length !== 2 ? "#45474c" : "#66666a"),
+      backgroundColor: cell.active ? colors[row % colors.length] : (cell.note.length !== 2 ? "#45474c" : "#66666a"),
       height: 25,
       width: 25,
       margin: 4,
     };
 
+    let cellTextStyle: React.CSSProperties = {
+      color: "white",
+      backgroundColor: "transparent",
+      display: 'flex',
+      fontWeight: "500",
+      fontSize: 12,
+      userSelect: "none",
+      justifyContent: "center",
+      paddingTop: 5,
+    };
+
     return(
-       <div key ={cell.note} onMouseDown = {() => onCellClick(row, col, !cell.active)} style = {cellStyle}/>
+       <div key ={cell.note} onMouseDown = {() => onCellClick(row, col, !cell.active)} style = {cellStyle}>
+        <div style={cellTextStyle}>{cell.active ? cell.note.slice(0,cell.note.length-1) : null}</div>
+       </div>
     ) 
   }
 
@@ -262,9 +277,7 @@ function App() {
 
     return(
       <div onMouseDown = {(event) => playNote(note + octaveIndex, event)} onMouseEnter = {(event) => playNote(note + octaveIndex, event)} key = {note} style = {keyStyle}>
-        <div style={keyTextStyle}>
-          {note}
-        </div>
+        <div style={keyTextStyle}> {note} </div>
       </div>
     )
 
