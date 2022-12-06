@@ -85,7 +85,7 @@ function App() {
 
     return(
       <div style={buttonStyle} onMouseDown = {() => onPress()}>
-        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none"}}>
+        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none", color: "white"}}>
           {!playing ? "Play" : "Pause"}
         </div>
       </div>
@@ -127,7 +127,7 @@ function App() {
 
     return(
       <div style={buttonStyle} onMouseDown = {() => onPress()}>
-        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none"}}>
+        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none", color: "white"}}>
           {"Clear"}
         </div>
       </div>
@@ -156,7 +156,7 @@ function App() {
 
     return(
       <div style={buttonStyle} onMouseDown = {() => onPress()}>
-        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none"}}>
+        <div style={{fontWeight: "bold", marginTop: 2, userSelect:"none", color: "white"}}>
           {"Sample"}
         </div>
       </div>
