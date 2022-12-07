@@ -14,7 +14,7 @@ const synth = new Tone.Synth({ oscillator: { type: "square8" } }).toDestination(
 const STEPS = 30;
 
 // A list of octaves
-const OCTAVES = [4];
+const OCTAVES = [5,4];
 
 // Flags
 let started = false;
