@@ -11,10 +11,10 @@ const SAMPLE_NOTES = ["E5", "D5", "C5", "D5", "E5", "E5", "E5","", "D5", "D5", "
 const synth = new Tone.Synth({ oscillator: { type: "square8" } }).toDestination();
 
 // How many steps (columns) to include in the grid
-const STEPS = 30;
+const STEPS = 12;
 
 // A list of octaves
-const OCTAVES = [5,4];
+const OCTAVES = [5];
 
 // Flags
 let started = false;
