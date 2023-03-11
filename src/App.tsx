@@ -5,16 +5,16 @@ import * as Tone from "tone";
 const NOTES = ["B","Bb","A","Ab","G","Gb","F","E","Eb","D", "Db", "C"];
 
 // Notes for Sample Song
-const SAMPLE_NOTES = ["E5", "D5", "C5", "D5", "E5", "E5", "E5","", "D5", "D5", "D5","", "E5","G5", "G5", "", "E5", "D5", "C5", "D5", "E5", "E5", "E5", "E5", "D5", "D5", "E5", "D5", "C5"];
+const SAMPLE_NOTES = ["E4", "D4", "C4", "D4", "E4", "E4", "E4","", "D4", "D4", "D4","", "E4","G4", "G4", "", "E4", "D4", "C4", "D4", "E4", "E4", "E4", "E4", "D4", "D4", "E4", "D4", "C4"];
 
 // Make a new instrument and set the destination to be the speakers
 const synth = new Tone.Synth({ oscillator: { type: "square8" } }).toDestination();
 
 // How many steps (columns) to include in the grid
-const STEPS = 12;
+const STEPS = 35;
 
 // A list of octaves
-const OCTAVES = [5];
+const OCTAVES = [4,3];
 
 // Flags
 let started = false;
@@ -31,7 +31,7 @@ function App() {
   return (
     <div style = {{backgroundColor: "#2b2c2f", paddingBottom: 20, flexDirection: 'column', display: "flex"}}>
 
-      <div style = {{display: "flex", flexDirection: "row", marginLeft: 75}}>
+      <div style = {{display: "flex", flexDirection: "row", marginLeft: 100}}>
         {PlayButton()}
         {ClearButton()}
         {SampleButton()}
